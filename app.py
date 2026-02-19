@@ -341,82 +341,58 @@ class SAN3App(tk.Tk):
         spec.loader.exec_module(mod)
         return mod
 
-    def _mock_inputs(self, answers: list):
-        it = iter(answers)
-        builtins.input = lambda _="": next(it, "")
+    def _run_mode_safe(self, mode_file, answers, done_msg):
+        """Safe wrapper — saves/restores input(), logs new files, catches errors."""
+        _real_input = builtins.input
+        before = set(OUTPUT_DIR.iterdir())
+        try:
+            it = iter(answers)
+            builtins.input = lambda _="": next(it, "")
+            mod = self._load_mode(mode_file)
+            mod.run(OUTPUT_DIR)
+            new_files = sorted(f.name for f in set(OUTPUT_DIR.iterdir()) - before)
+            for f in new_files:
+                self._log(f"  -> {f}")
+            self._log(done_msg)
+        except Exception as e:
+            self._log(f"ERROR: {e}", error=True)
+        finally:
+            builtins.input = _real_input  # always restored
 
-    def _restore_input(self):
-        builtins.input = input.__class__(input)
-
-    def _list_new_outputs(self, before: set) -> list:
-        after = set(OUTPUT_DIR.iterdir())
-        return [f.name for f in (after - before)]
+    def _list_new_outputs(self, before):
+        return [f.name for f in set(OUTPUT_DIR.iterdir()) - before]
 
     def _exec_beat_block(self):
         inp = self._get_inputs()
-        self._log(f"Beat Block → {inp['genre'].upper()} {inp['bpm']} BPM {inp['key']}")
-        before = set(OUTPUT_DIR.iterdir())
-        try:
-            self._mock_inputs([inp["genre"], inp["bpm"]])
-            mod = self._load_mode("beat_block.py")
-            mod.run(OUTPUT_DIR)
-            for f in self._list_new_outputs(before):
-                self._log(f"  → {f}")
-            self._log("Done. Open outputs folder.")
-        except Exception as e:
-            self._log(f"ERROR: {e}", error=True)
+        self._log(f"Beat Block -> {inp['genre'].upper()} {inp['bpm']} BPM {inp['key']}")
+        self._run_mode_safe("beat_block.py",
+                            [inp["genre"], inp["bpm"]],
+                            "Done. Open outputs folder.")
 
     def _exec_808_dial(self):
         inp = self._get_inputs()
-        self._log(f"808 Dial → Key: {inp['key']} Genre: {inp['genre'].upper()}")
-        before = set(OUTPUT_DIR.iterdir())
-        try:
-            self._mock_inputs([inp["key"], inp["genre"], "7"])
-            mod = self._load_mode("808_dial.py")
-            mod.run(OUTPUT_DIR)
-            for f in self._list_new_outputs(before):
-                self._log(f"  → {f}")
-            self._log("Done. Open outputs folder.")
-        except Exception as e:
-            self._log(f"ERROR: {e}", error=True)
+        self._log(f"808 Dial -> Key: {inp['key']} Genre: {inp['genre'].upper()}")
+        self._run_mode_safe("808_dial.py",
+                            [inp["key"], inp["genre"], "7"],
+                            "Done. Open outputs folder.")
 
     def _exec_drum_build(self):
         inp = self._get_inputs()
-        self._log(f"Drum Build → {inp['genre'].upper()} {inp['bpm']} BPM")
-        before = set(OUTPUT_DIR.iterdir())
-        try:
-            self._mock_inputs([inp["genre"], inp["bpm"]])
-            mod = self._load_mode("drum_build.py")
-            mod.run(OUTPUT_DIR)
-            for f in self._list_new_outputs(before):
-                self._log(f"  → {f}")
-            self._log("Done. Drag .mid into FL Studio.")
-        except Exception as e:
-            self._log(f"ERROR: {e}", error=True)
+        self._log(f"Drum Build -> {inp['genre'].upper()} {inp['bpm']} BPM")
+        self._run_mode_safe("drum_build.py",
+                            [inp["genre"], inp["bpm"]],
+                            "Done. Drag .mid into FL Studio.")
 
     def _exec_midi_gen(self):
         inp = self._get_inputs()
-        self._log(f"MIDI Gen → {inp['genre'].upper()} {inp['key']} {inp['bpm']} BPM")
-        before = set(OUTPUT_DIR.iterdir())
-
-        scale_map = {
-            "trap": "minor", "drill": "minor",
-            "hip hop": "minor_pent", "rnb": "dorian", "melodic": "minor"
-        }
+        self._log(f"MIDI Gen -> {inp['genre'].upper()} {inp['key']} {inp['bpm']} BPM")
+        scale_map = {"trap":"minor","drill":"minor",
+                     "hip hop":"minor_pent","rnb":"dorian","melodic":"minor"}
         scale = scale_map.get(inp["genre"], "minor")
-
-        try:
-            self._mock_inputs([
-                inp["genre"], inp["key"], scale,
-                inp["bpm"], inp["bars"], inp["midi_type"]
-            ])
-            mod = self._load_mode("midi_gen.py")
-            mod.run(OUTPUT_DIR)
-            for f in self._list_new_outputs(before):
-                self._log(f"  → {f}")
-            self._log("Done. Import .mid into Piano Roll.")
-        except Exception as e:
-            self._log(f"ERROR: {e}", error=True)
+        self._run_mode_safe("midi_gen.py",
+                            [inp["genre"], inp["key"], scale,
+                             inp["bpm"], inp["bars"], inp["midi_type"]],
+                            "Done. Import .mid into Piano Roll.")
 
     def _exec_mix_chain(self):
         inp = self._get_inputs()
