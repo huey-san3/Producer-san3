@@ -1,14 +1,19 @@
+# Environment
 .env
+
+# Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 .Python
-outputs/*.mid
-outputs/*.txt
-outputs/*.py
 *.egg-info/
 dist/
 build/
+
+# Outputs — generated at runtime, never tracked
+outputs/
+
+# OS
 .DS_Store
 Thumbs.db

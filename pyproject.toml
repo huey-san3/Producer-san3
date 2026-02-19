@@ -1,0 +1,16 @@
+[project]
+name = "san3-producer"
+version = "1.0.0"
+description = "SAN3 Co-Producer Tool — Hip Hop | RnB | Rap | Trap"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    "midiutil==1.2.1",
+    "colorama==0.4.6",
+]
+
+[project.scripts]
+san3 = "main:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.backends.legacy:build"
