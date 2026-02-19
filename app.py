@@ -72,7 +72,7 @@ class SAN3App(tk.Tk):
 
         # Position: top-right corner of screen
         self.update_idletasks()
-        w, h = 580, 700
+        w, h = 640, 760
         sw = self.winfo_screenwidth()
         self.geometry(f"{w}x{h}+{sw - w - 10}+30")
 
