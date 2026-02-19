@@ -165,6 +165,11 @@ class SAN3App(tk.Tk):
         row3.pack(fill="x", pady=2)
         self._mode_btn_full(row3, "MIX CHAIN", self._run_mix_chain)
 
+        # Row 4 — Generator (accent color — featured)
+        row4 = tk.Frame(modes_frame, bg=COLORS["bg"])
+        row4.pack(fill="x", pady=2)
+        self._mode_btn_accent(row4, "GENERATOR  —  San3_DaD3aL Boi", self._run_generator)
+
         self._divider()
 
         # ── MIDI TYPE (for MIDI Gen)
@@ -270,6 +275,21 @@ class SAN3App(tk.Tk):
         btn.pack(fill="x")
         self._btn_hover(btn)
 
+    def _mode_btn_accent(self, parent, text, cmd):
+        """Featured button — gold border, stands out."""
+        btn = tk.Button(parent, text=text, font=FONT_BTN,
+                        fg=COLORS["accent"], bg=COLORS["btn_bg"],
+                        activebackground=COLORS["accent"],
+                        activeforeground=COLORS["bg"],
+                        relief="flat", bd=2,
+                        highlightbackground=COLORS["accent"],
+                        highlightthickness=1,
+                        padx=8, pady=8,
+                        cursor="hand2", command=cmd)
+        btn.pack(fill="x")
+        btn.bind("<Enter>", lambda e: btn.config(bg=COLORS["accent"], fg=COLORS["bg"]))
+        btn.bind("<Leave>", lambda e: btn.config(bg=COLORS["btn_bg"], fg=COLORS["accent"]))
+
     def _btn_hover(self, btn):
         btn.bind("<Enter>", lambda e: btn.config(bg=COLORS["btn_hover"],
                                                   fg=COLORS["accent"]))
@@ -351,6 +371,9 @@ class SAN3App(tk.Tk):
 
     def _run_mix_chain(self):
         self._run_in_thread(self._exec_mix_chain)
+
+    def _run_generator(self):
+        self._run_in_thread(self._exec_generator)
 
     # ── MODE EXECUTORS ─────────────────────────────────────────────────
     def _load_mode(self, filename: str):

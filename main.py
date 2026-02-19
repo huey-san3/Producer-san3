@@ -58,11 +58,12 @@ def _select_mode() -> str | None:
     print("    3. Drum Build   — generate a drum pattern")
     print("    4. MIDI Gen     — melody / chords / bass")
     print("    5. Mix Chain    — full FL Studio mix guide")
+    print("    6. GENERATOR    — random patterns, unique IDs, San3_DaD3aL Boi")
     print("    0. Exit\n")
 
     choice = input("  Choice: ").strip()
 
-    modes = {"1", "2", "3", "4", "5"}
+    modes = {"1", "2", "3", "4", "5", "6"}
     if choice in modes:
         return choice
     if choice == "0" or choice == "":
@@ -81,6 +82,7 @@ def _run_mode(mode: str, output_dir: Path) -> None:
         "3": "modes/drum_build.py",
         "4": "modes/midi_gen.py",
         "5": "modes/mix_chain.py",
+        "6": "modes/generator.py",
     }
 
     filepath = Path(__file__).parent / mode_files[mode]
