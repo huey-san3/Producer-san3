@@ -396,22 +396,66 @@ class SAN3App(tk.Tk):
                             "Done. Open outputs folder.")
 
     def _exec_drum_build(self):
-        inp = self._get_inputs()
-        self._log(f"Drum Build -> {inp['genre'].upper()} {inp['bpm']} BPM")
-        self._run_mode_safe("drum_build.py",
-                            [inp["genre"], inp["bpm"]],
-                            "Done. Drag .mid into FL Studio.")
+        inp   = self._get_inputs()
+        genre = inp["genre"]
+        try:
+            bpm = int(inp["bpm"])
+        except ValueError:
+            bpm = 140
+        self._log(f"Drum Build -> {genre.upper()} {bpm} BPM")
+        import threading
+        def _run():
+            _real = __builtins__["input"] if isinstance(__builtins__, dict) else __builtins__.input
+            try:
+                import importlib.util, builtins
+                from pathlib import Path
+                _real_input = builtins.input
+                builtins.input = lambda _="": ""
+                spec = importlib.util.spec_from_file_location("drum_gen", Path(__file__).parent / "modes" / "drum_gen.py")
+                mod  = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(mod)
+                result = mod.run(OUTPUT_DIR, genre, bpm)
+                self._log(f"  -> {result['path'].name}")
+                self._log(f"  ID: {result['id']}")
+                self._log("Done. Drag .mid into FL Studio.")
+            except Exception as e:
+                self._log(f"ERROR: {e}", error=True)
+            finally:
+                builtins.input = _real_input
+        threading.Thread(target=_run, daemon=True).start()
 
     def _exec_midi_gen(self):
-        inp = self._get_inputs()
-        self._log(f"MIDI Gen -> {inp['genre'].upper()} {inp['key']} {inp['bpm']} BPM")
+        inp   = self._get_inputs()
+        genre = inp["genre"]
+        key   = inp["key"]
+        try:
+            bpm = int(inp["bpm"])
+        except ValueError:
+            bpm = 140
+        bars = int(inp["bars"])
         scale_map = {"trap":"minor","drill":"minor",
                      "hip hop":"minor_pent","rnb":"dorian","melodic":"minor"}
-        scale = scale_map.get(inp["genre"], "minor")
-        self._run_mode_safe("midi_gen.py",
-                            [inp["genre"], inp["key"], scale,
-                             inp["bpm"], inp["bars"], inp["midi_type"]],
-                            "Done. Import .mid into Piano Roll.")
+        scale = scale_map.get(genre, "minor")
+        self._log(f"MIDI Gen -> {genre.upper()} {key} {scale} {bpm} BPM")
+        import threading
+        def _run():
+            try:
+                import importlib.util, builtins
+                from pathlib import Path
+                _real_input = builtins.input
+                builtins.input = lambda _="": ""
+                spec = importlib.util.spec_from_file_location("melody_gen", Path(__file__).parent / "modes" / "melody_gen.py")
+                mod  = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(mod)
+                result = mod.run(OUTPUT_DIR, genre, key, scale, bpm, bars)
+                self._log(f"  -> {result['path'].name}")
+                self._log(f"  ID: {result['id']}")
+                self._log("Done. Import .mid into Piano Roll.")
+            except Exception as e:
+                self._log(f"ERROR: {e}", error=True)
+            finally:
+                builtins.input = _real_input
+        threading.Thread(target=_run, daemon=True).start()
 
     def _exec_mix_chain(self):
         inp = self._get_inputs()
