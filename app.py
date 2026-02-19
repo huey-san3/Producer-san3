@@ -22,6 +22,13 @@ import sys
 from pathlib import Path
 from datetime import datetime
 
+# Windows DPI awareness — prevents blurry/black rendering on high-DPI screens
+try:
+    from ctypes import windll
+    windll.shcore.SetProcessDpiAwareness(1)
+except Exception:
+    pass
+
 # ── CONSTANTS ──────────────────────────────────────────────────────────
 OUTPUT_DIR = Path(__file__).parent / "outputs"
 OUTPUT_DIR.mkdir(exist_ok=True)
@@ -65,11 +72,12 @@ class SAN3App(tk.Tk):
 
         # Position: top-right corner of screen
         self.update_idletasks()
-        w, h = 300, 620
+        w, h = 580, 700
         sw = self.winfo_screenwidth()
         self.geometry(f"{w}x{h}+{sw - w - 10}+30")
 
         self._build_ui()
+        self._init_dropdowns()
         self._log("SAN3 Producer ready.")
         self._log("Select genre, key, BPM — then hit a mode.")
 
@@ -101,8 +109,9 @@ class SAN3App(tk.Tk):
         self.genre_var = tk.StringVar(value="trap")
         genre_menu = ttk.Combobox(ctrl, textvariable=self.genre_var,
                                   values=GENRES, state="readonly",
-                                  font=FONT_MAIN, width=26)
+                                  font=FONT_MAIN, width=52)
         genre_menu.pack(fill="x", pady=(0, 6))
+        genre_menu.set("trap")
         genre_menu.bind("<<ComboboxSelected>>", self._on_genre_change)
 
         # Key
@@ -110,8 +119,9 @@ class SAN3App(tk.Tk):
         self.key_var = tk.StringVar(value="F")
         key_menu = ttk.Combobox(ctrl, textvariable=self.key_var,
                                 values=KEYS, state="readonly",
-                                font=FONT_MAIN, width=26)
+                                font=FONT_MAIN, width=52)
         key_menu.pack(fill="x", pady=(0, 6))
+        key_menu.set("F")
 
         # BPM
         self._label(ctrl, "BPM")
@@ -278,6 +288,15 @@ class SAN3App(tk.Tk):
                         bordercolor=COLORS["border"],
                         arrowcolor=COLORS["accent"],
                         relief="flat")
+        style.map("TCombobox",
+                  fieldbackground=[("readonly", COLORS["panel"])],
+                  foreground=[("readonly", COLORS["text"])],
+                  selectbackground=[("readonly", COLORS["accent"])],
+                  selectforeground=[("readonly", COLORS["bg"])])
+        self.option_add("*TCombobox*Listbox.background", COLORS["panel"])
+        self.option_add("*TCombobox*Listbox.foreground", COLORS["text"])
+        self.option_add("*TCombobox*Listbox.selectBackground", COLORS["accent"])
+        self.option_add("*TCombobox*Listbox.selectForeground", COLORS["bg"])
 
     # ── LOG ────────────────────────────────────────────────────────────
     def _log(self, msg: str, error: bool = False):
@@ -407,6 +426,13 @@ class SAN3App(tk.Tk):
             self._log("Done. Open outputs folder.")
         except Exception as e:
             self._log(f"ERROR: {e}", error=True)
+
+
+    def _init_dropdowns(self):
+        """Force dropdowns to display their default values after style is applied."""
+        self.genre_var.set("trap")
+        self.key_var.set("F")
+        self.update_idletasks()
 
 
 # ── ENTRY ──────────────────────────────────────────────────────────────
