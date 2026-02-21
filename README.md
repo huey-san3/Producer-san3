@@ -1,72 +1,110 @@
-# SAN3 Producer — Co-Producer Tool
+# SAN3 Producer
 
-**Hip Hop | RnB | Rap | Trap**
+**Co-Producer for Hip Hop | RnB | Rap | Trap**
 
-An AI co-producer that runs beside you in your FL Studio sessions.
-Not a tutorial. Not a plugin. A producer sitting next to you.
-
----
-
-## What It Does
-
-| Mode | What You Get |
-|------|-------------|
-| **Beat Block** | Stuck? Get a genre, BPM, key, 3-step ritual + MIDI seed in under a minute |
-| **808 Dial** | Full FL Studio 808 tuning + mixer chain — sidechain, EQ, compression, mono check |
-| **Drum Build** | Trap, drill, hip hop, rnb, melodic patterns — velocity guide + MIDI files |
-| **MIDI Gen** | Melody, chords, bass line, counter melody — diatonic, genre-aware, importable |
-| **Mix Chain** | Channel-by-channel FL Studio mix guide. Every plugin, every frequency, explained |
+Floating GUI panel that sits beside FL Studio. Always on top. No terminal needed during use.
 
 ---
 
 ## Setup
 
 ```bash
+# 1. Clone
 git clone https://github.com/huey-san3/Producer-san3.git
 cd Producer-san3
+
+# 2. Install dependencies
 pip install -r requirements.txt
-python smoke_test.py
-python main.py
+
+# 3. Run
+python app.py
 ```
 
-**Requirements:** Python 3.10/3.11 | Windows 11 / macOS / Linux | FL Studio (any edition)
+---
+
+## Modes
+
+| Button | What It Does | Output |
+|---|---|---|
+| BEAT BLOCK | Beat structure guide + reference | `.txt` |
+| 808 DIAL | 808 tuning guide for your key | `.txt` |
+| DRUM BUILD | Algorithmic drum pattern | `.mid` |
+| MIDI GEN | Melody / chord / bass MIDI | `.mid` |
+| MIX CHAIN | Full FL Studio mix guide | `.txt` |
+| GENERATOR | Full beat loop — drums + melody | `.mid` x2 |
 
 ---
 
-## Importing MIDI into FL Studio
+## FL Studio Workflow
 
-1. Piano Roll → right-click → **Import MIDI**
-2. Select the `.mid` file from `outputs/`
-3. `Ctrl+A` → `Alt+Q` → Quantize **1/16**
-4. Humanize: Select All → right-click → Randomize velocity ±10
-
----
-
-## FL Studio Plugins Used (native only)
-
-Parametric EQ 2 · Fruity Compressor · Maximus · Fruity Reverb 2 · Fruity Delay 3  
-Fruity Fast Dist · Fruity Peak Controller · Fruity Stereo Enhancer · Soundgoodizer
-
-No third-party plugins required.
+1. Hit a mode button
+2. Click **OPEN OUTPUTS FOLDER**
+3. Drag `.mid` files directly into FL Studio Piano Roll
+4. `.txt` guides open in any text editor
 
 ---
 
-## Structure
+## File Structure
 
 ```
 Producer-san3/
-  main.py          ← run this
-  smoke_test.py    ← verify setup
-  requirements.txt
-  modes/
-    beat_block.py
-    808_dial.py
-    drum_build.py
-    midi_gen.py
-    mix_chain.py
-  outputs/         ← all generated files
+├── app.py              # Main GUI — run this
+├── smoke_test.py       # Run after code changes to verify health
+├── requirements.txt
+├── .gitignore
+├── modes/
+│   ├── 808_dial.py
+│   ├── beat_block.py
+│   ├── drum_build.py
+│   ├── drum_gen.py
+│   ├── generator.py
+│   ├── melody_gen.py
+│   ├── midi_gen.py
+│   ├── mix_chain.py
+│   └── pattern_catalog.py
+├── outputs/            # All generated files land here
+│   └── .session.json  # Last session settings (auto-saved)
+└── logs/
+    └── production.log  # Audit trail of every generation
 ```
 
 ---
 
-MIT License | Built under the SAN3 Engineering Constitution
+## Session Memory
+
+The app saves your last used Genre / Key / BPM / Bars automatically.  
+On next launch, it restores exactly where you left off.
+
+---
+
+## Audit Log
+
+Every generation is logged to `logs/production.log`:
+
+```
+[2026-02-20 02:24:11] GENERATOR   | trap     | F   | 140 BPM | drums_GEN-0001_trap_140bpm.mid
+[2026-02-20 02:24:12] GENERATOR   | trap     | F   | 140 BPM | melody_GEN-0002_trap_F_140bpm.mid
+```
+
+---
+
+## After Code Changes
+
+Always run the smoke test before committing:
+
+```bash
+python smoke_test.py
+```
+
+Expected: `All systems nominal.`
+
+---
+
+## Producer Tag
+
+All GENERATOR output MIDI files are tagged:  
+**San3_DaD3aL Boi** — embedded in the MIDI track name.
+
+---
+
+*Built inside SAN3 infrastructure. Internal module → future product.*

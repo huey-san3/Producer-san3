@@ -1,19 +1,45 @@
-# Environment
-.env
+# SAN3 Producer — .gitignore
 
-# Python
+# Environment & secrets
+.env
+*.env
+
+# Session state (user-specific, not for version control)
+outputs/.session.json
+
+# Pattern history (local data, not shared)
+outputs/.pattern_history.json
+
+# Generated outputs (don't commit MIDI files to repo)
+outputs/*.mid
+outputs/*.txt
+
+# Logs (local only)
+logs/
+
+# Python cache
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
 *.pyd
 .Python
-*.egg-info/
-dist/
-build/
 
-# Outputs — generated at runtime, never tracked
-outputs/
+# Virtual environments
+venv/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
 
 # OS
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# Build
+dist/
+build/
+*.egg-info/

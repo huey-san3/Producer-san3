@@ -1,0 +1,47 @@
+{
+  "TRAP_MELODY_0001": {
+    "id": "TRAP_MELODY_0001",
+    "type": "melody",
+    "genre": "trap",
+    "key": "F",
+    "fingerprint": "6cd4623a30d5",
+    "note_count": 9,
+    "repeat": false
+  },
+  "TRAP_DRUM_0001": {
+    "id": "TRAP_DRUM_0001",
+    "type": "drum",
+    "genre": "trap",
+    "key": "drums",
+    "fingerprint": "4997db3b293d",
+    "note_count": 49,
+    "repeat": false
+  },
+  "TRAP_DRUM_0002": {
+    "id": "TRAP_DRUM_0002",
+    "type": "drum",
+    "genre": "trap",
+    "key": "drums",
+    "fingerprint": "be7fa492ddb8",
+    "note_count": 51,
+    "repeat": false
+  },
+  "TRAP_MELODY_0002": {
+    "id": "TRAP_MELODY_0002",
+    "type": "melody",
+    "genre": "trap",
+    "key": "F",
+    "fingerprint": "9e87f7675465",
+    "note_count": 7,
+    "repeat": false
+  },
+  "TRAP_MELODY_0003": {
+    "id": "TRAP_MELODY_0003",
+    "type": "melody",
+    "genre": "trap",
+    "key": "F",
+    "fingerprint": "d3869a250631",
+    "note_count": 11,
+    "repeat": false
+  }
+}

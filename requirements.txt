@@ -1,3 +1,12 @@
-midiutil==1.2.1
-colorama==0.4.6
+# SAN3 Producer — Requirements
+# Python 3.10 / 3.11 compatible
+# Windows 11 primary target
+#
+# Install:
+#   pip install -r requirements.txt
+
+# MIDI file generation — core dependency
+midiutil>=1.2.1
+
 # tkinter is built into Python on Windows — no install needed
+# If on Linux: sudo apt-get install python3-tk
